@@ -13,22 +13,12 @@ ARG WORDPRESS_PASSWORD=misaki
 RUN apt-get update
 RUN apt-get install php-fpm php-mysql curl vim -y
 
-# RUN mkdir -p /var/www/html/wordpress
-
 WORKDIR /var/www/html/wordpress
 
 COPY ./script.sh /
 RUN chmod 777 /script.sh
 
-# COPY ./wp-config.php /
-# RUN rm /etc/php/7.3/fpm/pool.d/www.conf
-# COPY ./www.conf /etc/php/7.3/fpm/pool.d/www.conf
 RUN sed -i 's/listen = \/run\/php\/php7.3-fpm.sock/listen = 0.0.0.0:9000/' /etc/php/7.3/fpm/pool.d/www.conf
-# RUN sed -i "s///" /etc/php/7.3/fpm/pool.d/www.conf
-# RUN sed -i "s///" /etc/php/7.3/fpm/pool.d/www.conf
-
-# RUN chmod 777 /script.sh
-# RUN chmod 777 /etc/php/7.3/fpm/pool.d/www.conf
 
 EXPOSE 9000
 CMD ["/script.sh"]
