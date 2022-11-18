@@ -1,0 +1,166 @@
+version: '3'
+
+services:
+  mariadb:
+    build:
+      context: ./mariadb/
+      args: 
+        - MYSQL_USER=$MYSQL_USER
+        - MYSQL_PASSWORD=$MYSQL_PASSWORD
+        - MYSQL_DATABASE=$MYSQL_DATABASE
+        - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+    image: mariadb
+    container_name: mariadb
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    env_file: .env
+    restart: always
+    networks:
+        - mynetwork
+
+  wordpress:                         
+    # build: ./wordpress/
+    build:
+      context: ./wordpress/
+      args: 
+        - WORDPRESS_DB_HOST=$WORDPRESS_DB_HOST
+        - WORDPRESS_DB_USER=$WORDPRESS_DB_USER
+        - WORDPRESS_DB_PASSWORD=$WORDPRESS_DB_PASSWORD
+        - WORDPRESS_DB_NAME=$WORDPRESS_DB_NAME
+        - WORDPRESS_ROOT_USER=$WORDPRESS_ROOT_USER
+        - WORDPRESS_ROOT_PASSWORD=$WORDPRESS_ROOT_PASSWORD
+        - WORDPRESS_USER=$WORDPRESS_USER
+        - WORDPRESS_PASSWORD=$WORDPRESS_PASSWORD
+    image: wordpress
+    container_name: wordpress
+    volumes:
+      - wordpress_nginx:/var/www/html/wordpress
+    depends_on:
+      - mariadb
+    env_file: .env
+    networks:
+      - mynetwork
+    restart: always
+ 
+  nginx:
+    build: ./nginx/
+    image: nginx
+    container_name: nginx
+    volumes:
+      - wordpress_nginx:/var/www/html/wordpress
+      # - website_data:/var/www/html/website
+    ports:
+      - 443:443
+      # - 1337:1337
+    depends_on:
+      - wordpress
+      # - website
+    restart: always
+    networks:
+      - mynetwork
+  
+  # website:
+  #   build: ./bonus/website/
+  #   image: website
+  #   container_name: website
+  #   volumes:
+  #     - website_data:/var/www/html/website
+  #   restart: always
+  #   networks:
+  #     - mynetwork
+  #   tty: true
+
+  # adminer:
+  #   build: ./bonus/adminer/
+  #   image: adminer
+  #   container_name: adminer
+  #   env_file: .env
+  #   restart: always
+  #   depends_on:
+  #     - mariadb
+  #   ports:
+  #     - 8080:8080
+  #   networks:
+  #     - mynetwork
+
+  # ftp:
+  #   build:
+  #     context: ./bonus/ftp/
+  #     args: 
+  #       - FTP_USER_NAME=$FTP_USER_NAME
+  #       - FTP_USER_PASS=$FTP_USER_PASS
+  #       - FTP_USER_HOME=$FTP_USER_HOME
+  #   image: ftp
+  #   container_name: ftp
+  #   env_file: .env
+  #   restart: always
+  #   depends_on:
+  #     - wordpress
+  #   ports:
+  #     - "21:21"
+  #     - "40000-40009:40000-40009"
+  #   volumes:
+  #     - wordpress_nginx:/home/misaki/ftp
+  #   networks:
+  #     - mynetwork 
+
+  # cadvisor:
+  #   build: ./bonus/cadvisor/
+  #   image: google/cadvisor
+  #   container_name: cadvisor
+  #   env_file: .env
+  #   restart: always    
+  #   volumes:
+  #     - /:/rootfs:ro
+  #     - /var/run:/var/run:rw
+  #     - /sys:/sys:ro
+  #     - /var/lib/docker/:/var/lib/docker:ro
+  #   ports:
+  #     - 8081:8081
+  #   networks:
+  #     - mynetwork
+
+  redis:
+    build: ./bonus/redis/
+    image: redis
+    container_name: redis
+    env_file: .env
+    restart: always
+    depends_on:
+      - wordpress
+    ports:
+      - 6379:6379
+    networks:
+      - mynetwork
+
+volumes:
+  # website_data:
+  wordpress_nginx:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /Users/mmounchi/Desktop/Docker/data/wordpress_nginx
+  mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /Users/mmounchi/Desktop/Docker/data/mariadb_data
+
+# volumes:
+#   mariadb_data:
+#     driver_opts:
+#       type: none
+#       o: bind
+#       device: /home/misaki/Desktop/Docker/data/mariadb_data
+#   wordpress_nginx:
+#     driver_opts:
+#       type: none
+#       o: bind
+#       device: /home/misaki/Desktop/Docker/data/wordpress_nginx
+
+networks:
+  mynetwork:
+      # name: mynetwork
+      driver: bridge
