@@ -9,10 +9,6 @@ RUN rm -f /etc/nginx/sites-enabled/default
 COPY ./nginx.conf /etc/nginx/sites-enabled/nginx.conf
 RUN ln -s /etc/nginx/sites-enabled/nginx.conf /etc/nginx/sites-available/nginx.conf
 
-# COPY ./script.sh /
-# RUN chmod 777 script.sh
-
 EXPOSE 443
 
-# CMD ["./script.sh"]
 CMD echo "Nginx is Running.." ; nginx -g 'daemon off;'

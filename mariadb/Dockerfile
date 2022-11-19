@@ -17,5 +17,4 @@ RUN chmod +x /mariadb.sh
 RUN service mysql start &&  /bin/sh /mariadb.sh
 EXPOSE 3306
 
-# CMD ["mysqld_safe"]
 CMD echo "Mariadb is Running.." ; mysqld_safe
