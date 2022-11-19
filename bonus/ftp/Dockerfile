@@ -4,13 +4,13 @@ ARG FTP_USER_NAME=$FTP_USER_NAME
 ARG FTP_USER_PASS=$FTP_USER_PASS
 ARG FTP_USER_HOME=$FTP_USER_HOME
 
-COPY ./script.sh /
-RUN chmod +x script.sh
+# COPY ./script.sh /
+# RUN chmod +x script.sh
 
 RUN apt-get update
 RUN apt-get install vsftpd vim -y
 
-RUN useradd -ms /bin/bash ${FTP_USER_NAME}
+RUN useradd ${FTP_USER_NAME}
 RUN echo ${FTP_USER_NAME}:${FTP_USER_PASS} | chpasswd 
 RUN echo ${FTP_USER_NAME} | tee -a  /etc/vsftpd.userlist
 
@@ -30,4 +30,5 @@ RUN chown -R ${FTP_USER_NAME}:${FTP_USER_PASS} ${FTP_USER_HOME}
 
 EXPOSE 21 40000-40009
 
-CMD ["./script.sh"]
+# CMD ["./script.sh"]
+CMD echo "My Portfolio is Running.." ; vsftpd

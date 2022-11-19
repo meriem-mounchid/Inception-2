@@ -19,7 +19,6 @@ services:
         - mynetwork
 
   wordpress:                         
-    # build: ./wordpress/
     build:
       context: ./wordpress/
       args: 
@@ -48,77 +47,75 @@ services:
     container_name: nginx
     volumes:
       - wordpress_nginx:/var/www/html/wordpress
-      # - website_data:/var/www/html/website
     ports:
       - 443:443
-      # - 1337:1337
     depends_on:
       - wordpress
-      # - website
     restart: always
     networks:
       - mynetwork
   
-  # website:
-  #   build: ./bonus/website/
-  #   image: website
-  #   container_name: website
-  #   volumes:
-  #     - website_data:/var/www/html/website
-  #   restart: always
-  #   networks:
-  #     - mynetwork
-  #   tty: true
+  website:
+    build: ./bonus/website/
+    image: website
+    container_name: website
+    ports:
+      - 1337:1337
+    volumes:
+      - website_data:/var/www/html/website
+    restart: always
+    networks:
+      - mynetwork
 
-  # adminer:
-  #   build: ./bonus/adminer/
-  #   image: adminer
-  #   container_name: adminer
-  #   env_file: .env
-  #   restart: always
-  #   depends_on:
-  #     - mariadb
-  #   ports:
-  #     - 8080:8080
-  #   networks:
-  #     - mynetwork
+  adminer:
+    build: ./bonus/adminer/
+    image: adminer
+    container_name: adminer
+    env_file: .env
+    restart: always
+    depends_on:
+      - mariadb
+    ports:
+      - 8080:8080
+    networks:
+      - mynetwork
 
-  # ftp:
-  #   build:
-  #     context: ./bonus/ftp/
-  #     args: 
-  #       - FTP_USER_NAME=$FTP_USER_NAME
-  #       - FTP_USER_PASS=$FTP_USER_PASS
-  #       - FTP_USER_HOME=$FTP_USER_HOME
-  #   image: ftp
-  #   container_name: ftp
-  #   env_file: .env
-  #   restart: always
-  #   depends_on:
-  #     - wordpress
-  #   ports:
-  #     - "21:21"
-  #     - "40000-40009:40000-40009"
-  #   volumes:
-  #     - wordpress_nginx:/home/misaki/ftp
-  #   networks:
-  #     - mynetwork 
+  ftp:
+    build:
+      context: ./bonus/ftp/
+      args: 
+        - FTP_USER_NAME=$FTP_USER_NAME
+        - FTP_USER_PASS=$FTP_USER_PASS
+        - FTP_USER_HOME=$FTP_USER_HOME
+    image: ftp
+    container_name: ftp
+    env_file: .env
+    restart: always
+    depends_on:
+      - wordpress
+    ports:
+      - "21:21"
+      - "40000-40009:40000-40009"
+    volumes:
+      - wordpress_nginx:/home/misaki/ftp
+    networks:
+      - mynetwork 
 
-  # cadvisor:
-  #   build: ./bonus/cadvisor/
-  #   image: google/cadvisor
-  #   container_name: cadvisor
-  #   env_file: .env
-  #   restart: always    
-  #   volumes:
-  #     - /:/rootfs:ro
-  #     - /var/run:/var/run:rw
-  #     - /sys:/sys:ro
-  #     - /var/lib/docker/:/var/lib/docker:ro
-  #   ports:
-  #     - 8081:8081
-  #   networks:
-  #     - mynetwork
+  cadvisor:
+    build: ./bonus/cadvisor/
+    image: google/cadvisor
+    container_name: cadvisor
+    env_file: .env
+    restart: always    
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+      - 8081:8081
+    networks:
+      - mynetwork
 
   redis:
     build: ./bonus/redis/
@@ -134,7 +131,7 @@ services:
       - mynetwork
 
 volumes:
-  # website_data:
+  website_data:
   wordpress_nginx:
     driver: local
     driver_opts:

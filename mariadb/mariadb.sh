@@ -9,4 +9,4 @@ mysql -u root -e "UPDATE mysql.user SET host='%' WHERE user='root'"
 mysql -u root -e "FLUSH PRIVILEGES"
 mysql -u root -e "ALTER USER 'root'@'%' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD'"
 
-echo "Mariadb is Running.."
+# echo "Mariadb is Running.."

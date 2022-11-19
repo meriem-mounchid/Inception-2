@@ -50,7 +50,7 @@ install:
 build:
 	@echo $(BUILDING_BANNER)
 	@echo "$(BLUE)-- Docker-Compose Start Building --$(END)"
-	-@$(DC) up --build -d
+	-@$(DC) up --build
 	@echo "$(GREEN)-- Docker-Compose Built Successfully--$(END)"
 
 down:
